@@ -15,19 +15,16 @@ import com.b127.gate.service.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {
-	
+
 	@Autowired
 	private UserRepository userRepository;
-	
-	
-	
+
 	@Autowired
 	private PasswordEncoder encoder;
 
 	@Override
 	public List<User> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return userRepository.findAll();
 	}
 
 	@Override
@@ -38,7 +35,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void delete(int id) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -52,12 +49,27 @@ public class UserServiceImpl implements UserService {
 		}
 
 		// Creating user account
-		User user = new User( registerUser.getUsername(), registerUser.getEmail(), registerUser.getIdNo(),
+		User user = new User(registerUser.getUsername(), registerUser.getEmail(), registerUser.getIdNo(),
 				encoder.encode(registerUser.getPassword()));
-		
+
 		user.setRoles(Arrays.asList(new Role("ROLE_ADMIN")));
-		
+
 		return userRepository.save(user);
+	}
+
+	@Override
+	public User findByUsername(String username) {
+		return userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+	}
+
+	@Override
+	public User update(User user) {
+		User updatingUser = userRepository.findById(user.getId())
+				.orElseThrow(() -> new RuntimeException("user not found"));
+
+		updatingUser.setRoles(user.getRoles());
+		System.out.println(updatingUser);
+		return userRepository.save(updatingUser);
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.b127.gate.entity;
 
-import java.util.Collection;
+
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,7 +25,7 @@ public class Role {
 	private String name;
 	
 	@ManyToMany(mappedBy = "roles")
-	private Collection<User> roleUsers;
+	private List<User> roleUsers;
 	
 	public Role() {
 		
@@ -50,11 +51,11 @@ public class Role {
 		this.name = name;
 	}
 
-	public Collection<User> getRoleUsers() {
+	public List<User> getRoleUsers() {
 		return roleUsers;
 	}
 
-	public void setRoleUsers(Collection<User> roleUsers) {
+	public void setRoleUsers(List<User> roleUsers) {
 		this.roleUsers = roleUsers;
 	}
 	

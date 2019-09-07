@@ -34,13 +34,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 
 		http.authorizeRequests()
-				.antMatchers("/", "/login", "/logout", "/register", "/css/**", "/js/**", "/img/**", "/plugins/**")
+				.antMatchers("/", "/login", "/logout", "/register", "**/css/**", "**/js/**", "**/scss/**", "**/vendor/**")
 				.permitAll().and().authorizeRequests().antMatchers("/user/**")
 				.access("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')").and().authorizeRequests().antMatchers("/admin/**")
 				.access("hasRole('ROLE_ADMIN')").and().formLogin().loginPage("/").loginProcessingUrl("/login")
 				.usernameParameter("username").passwordParameter("password")
 				.successHandler(customAuthenicationSuccessHandler).failureUrl("/login?error").permitAll().and().logout()
-				.invalidateHttpSession(true).clearAuthentication(true).logoutSuccessUrl("/logout").permitAll().and()
+				.invalidateHttpSession(true).clearAuthentication(true).logoutUrl("/logout").logoutSuccessUrl("/").permitAll().and()
 				.exceptionHandling().accessDeniedHandler(customAccessDeniedHandler).and().csrf().disable();
 
 	}
@@ -57,5 +57,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		auth.setPasswordEncoder(passwordEncoder());
 		return auth;
 	}
+	
+	
 
 }

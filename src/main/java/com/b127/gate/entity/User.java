@@ -1,6 +1,7 @@
 package com.b127.gate.entity;
 
-import java.util.Collection;
+
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -20,6 +21,8 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class User {
+
+	
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -44,7 +47,7 @@ public class User {
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-	private Collection<Role> roles;
+	private List<Role> roles;
 
 	public User() {
 	}
@@ -104,14 +107,23 @@ public class User {
 		this.email = email;
 	}
 
-	public Collection<Role> getRoles() {
+	public List<Role> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(Collection<Role> roles) {
+	public void setRoles(List<Role> roles) {
 		this.roles = roles;
 	}
-
+	
+	@Override
+	public String toString() {
+		String r = "";
+		for(Role role : roles ) {
+			r.concat(role.getName());
+		}
+		return "User [id=" + id + ", name=" + name + ", username=" + username + ", password=" + password + ", idNo="
+				+ idNo + ", email=" + email + ", roles=" + r + "]";
+	}
 	
 
 	

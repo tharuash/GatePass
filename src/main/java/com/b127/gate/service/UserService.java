@@ -15,5 +15,9 @@ public interface UserService {
     void delete(int id);
 
     User insert(RegisterUser registerUser);
+    
+    User findByUsername(String username);
+    
+    User update(User user);
 
 }

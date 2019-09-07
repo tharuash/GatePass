@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.b127.gate.dto.RegisterPass;
 import com.b127.gate.entity.Pass;
+import com.b127.gate.entity.User;
 
 public interface PassService {
 	List<Pass> findAll();
@@ -17,4 +18,8 @@ public interface PassService {
 	List<Pass> findAllByUserId(int UserId);
 	
 	Pass update(Pass pass);
+	
+	List<Pass> findAllByIssuedTime();
+	
+	List<Pass> findAllByUser(String username);
 }

@@ -1,6 +1,8 @@
 package com.b127.gate.service.impl;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,9 @@ import com.b127.gate.entity.User;
 import com.b127.gate.repository.PassRepository;
 import com.b127.gate.repository.UserRepository;
 import com.b127.gate.service.PassService;
+import com.b127.gate.service.UserService;
+
+
 
 @Service
 public class PassServiceImpl implements PassService {
@@ -63,6 +68,21 @@ public class PassServiceImpl implements PassService {
 		Pass updatingPass = passRepository.getOne(pass.getId());
 		updatingPass.setIsAccepted(pass.getIsAccepted());
 		return passRepository.save(updatingPass);
+	}
+
+	@Override
+	public List<Pass> findAllByIssuedTime() {
+		Calendar calendar = Calendar.getInstance();
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		String[] date = formatter.format(calendar.getTime()).split("-");
+		return passRepository.findAllByIssuedTime(new Timestamp(Integer.valueOf(date[0]), Integer.valueOf(date[1]), Integer.valueOf(date[2]),
+				0, 0, 0, 0));
+	}
+
+	@Override
+	public List<Pass> findAllByUser(String username) {
+		User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+		return passRepository.findAllByUser(user);
 	}
 
 }
