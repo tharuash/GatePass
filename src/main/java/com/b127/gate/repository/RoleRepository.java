@@ -10,4 +10,6 @@ import com.b127.gate.entity.Role;
 public interface RoleRepository extends JpaRepository<Role, Integer>{
 	
 	Optional<Role> findByName(String roleName);
+	
+	
 }

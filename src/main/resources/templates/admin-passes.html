@@ -82,15 +82,35 @@
 		<a class="navbar-brand mr-1" href="dashboard.html">GatePass</a>
 
 		<!-- Navbar Search -->
-		<form
+
+		<form th:if="${user == 'user'}"
+			class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0"
+			th:action="@{/admin/user/search/{id}(id=${userId})}" method="post">
+			<div class="input-group">
+				<input type="date" name="date" class="form-control"
+					placeholder="Search By Date" aria-label="Search"
+					aria-describedby="basic-addon2" required="required">
+				<div class="input-group-append">
+					<button type="submit" class="btn btn-primary" data-toggle="tooltip"
+						title="Search By Date">
+						<i class="fas fa-search"></i>
+					</button>
+				</div>
+			</div>
+		</form>
+
+
+
+		<form th:unless="${user == 'user'}"
 			class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0"
 			th:action="@{/admin/pass/search}" method="post">
 			<div class="input-group">
 				<input type="text" name="username" class="form-control"
 					placeholder="Search By Username" aria-label="Search"
-					aria-describedby="basic-addon2">
+					aria-describedby="basic-addon2" required="required">
 				<div class="input-group-append">
-					<button type="submit" class="btn btn-primary">
+					<button type="submit" class="btn btn-primary" data-toggle="tooltip1"
+						title="Search By Username">
 						<i class="fas fa-search"></i>
 					</button>
 				</div>
@@ -103,7 +123,7 @@
 				class="nav-link dropdown-toggle" href="#" id="alertsDropdown"
 				role="button" data-toggle="dropdown" aria-haspopup="true"
 				aria-expanded="false"> <i class="fas fa-bell fa-fw"></i> <span
-					class="badge badge-danger">9+</span>
+					class="badge badge-danger"></span>
 			</a>
 				<div class="dropdown-menu dropdown-menu-right"
 					aria-labelledby="alertsDropdown">
@@ -116,12 +136,11 @@
 				class="nav-link dropdown-toggle" href="#" id="messagesDropdown"
 				role="button" data-toggle="dropdown" aria-haspopup="true"
 				aria-expanded="false"> <i class="fas fa-envelope fa-fw"></i> <span
-					class="badge badge-danger">7</span>
+					class="badge badge-danger"></span>
 			</a>
 				<div class="dropdown-menu dropdown-menu-right"
 					aria-labelledby="messagesDropdown">
-					<a class="dropdown-item" href="#">Action</a> <a
-						class="dropdown-item" href="#">Another action</a>
+					<a class="dropdown-item" href="#">Action</a>
 					<div class="dropdown-divider"></div>
 					<a class="dropdown-item" href="#">Something else here</a>
 				</div></li>
@@ -132,11 +151,9 @@
 			</a>
 				<div class="dropdown-menu dropdown-menu-right"
 					aria-labelledby="userDropdown">
-					<a class="dropdown-item" href="#">Settings</a> <a
-						class="dropdown-item" href="#">Activity Log</a>
+					<a class="dropdown-item" href="#">Settings</a>
 					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" href="#" data-toggle="modal"
-						data-target="#logoutModal">Logout</a>
+					<a class="dropdown-item" th:href="@{/logout}">Logout</a>
 				</div></li>
 		</ul>
 
@@ -162,7 +179,8 @@
 
 				<!-- Breadcrumbs-->
 				<ol class="breadcrumb">
-					<li th:if="${user == 'user'}" class="breadcrumb-item"><a href="#">User Passes</a></li>
+					<li th:if="${user == 'user'}" class="breadcrumb-item"><a
+						href="#">User Passes</a></li>
 					<li class="breadcrumb-item"><a href="#">All Passes</a></li>
 					<li class="breadcrumb-item active">Overview</li>
 				</ol>
@@ -192,7 +210,8 @@
 								</div>
 							</div>
 							<h4 class="card-title">
-								Pass required at <span th:text="${pass.issuedTime}"></span>
+								Pass required at <span th:text="${pass.issuedDate}"></span> : <span
+									th:text="${pass.issuedTime}"></span>
 							</h4>
 
 
@@ -230,7 +249,12 @@
 
 
 
-
+	<script>
+		$(document).ready(function() {
+			$('[data-toggle="tooltip"]').tooltip();
+			$('[data-toggle="tooltip1"]').tooltip();
+		});
+	</script>
 
 
 

@@ -1,8 +1,7 @@
 package com.b127.gate.entity;
 
-
-
-import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,11 +25,30 @@ public class Pass {
 	@JoinColumn(name = "user_id", referencedColumnName = "id")
 	private User user;
 
+	@Column(name = "issued_date")
+	private LocalDate issuedDate;
+
 	@Column(name = "issued_time")
-	private Timestamp issuedTime;
+	private LocalTime issuedTime;
 
 	@Column(name = "is_accepted")
 	private boolean isAccepted;
+
+	public LocalDate getIssuedDate() {
+		return issuedDate;
+	}
+
+	public void setIssuedDate(LocalDate issuedDate) {
+		this.issuedDate = issuedDate;
+	}
+
+	public LocalTime getIssuedTime() {
+		return issuedTime;
+	}
+
+	public void setIssuedTime(LocalTime issuedTime) {
+		this.issuedTime = issuedTime;
+	}
 
 	public int getId() {
 		return id;
@@ -46,14 +64,6 @@ public class Pass {
 
 	public void setUser(User user) {
 		this.user = user;
-	}
-
-	public Timestamp getIssuedTime() {
-		return issuedTime;
-	}
-
-	public void setIssuedTime(Timestamp issuedTime) {
-		this.issuedTime = issuedTime;
 	}
 
 	public boolean getIsAccepted() {

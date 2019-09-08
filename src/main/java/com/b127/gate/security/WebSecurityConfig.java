@@ -39,7 +39,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.access("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')").and().authorizeRequests().antMatchers("/admin/**")
 				.access("hasRole('ROLE_ADMIN')").and().formLogin().loginPage("/").loginProcessingUrl("/login")
 				.usernameParameter("username").passwordParameter("password")
-				.successHandler(customAuthenicationSuccessHandler).failureUrl("/login?error").permitAll().and().logout()
+				.successHandler(customAuthenicationSuccessHandler).failureUrl("/?error").permitAll().and().logout()
 				.invalidateHttpSession(true).clearAuthentication(true).logoutUrl("/logout").logoutSuccessUrl("/").permitAll().and()
 				.exceptionHandling().accessDeniedHandler(customAccessDeniedHandler).and().csrf().disable();
 

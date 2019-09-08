@@ -88,7 +88,7 @@
 				class="nav-link dropdown-toggle" href="#" id="alertsDropdown"
 				role="button" data-toggle="dropdown" aria-haspopup="true"
 				aria-expanded="false"> <i class="fas fa-bell fa-fw"></i> <span
-					class="badge badge-danger">9+</span>
+					class="badge badge-danger"></span>
 			</a>
 				<div class="dropdown-menu dropdown-menu-right"
 					aria-labelledby="alertsDropdown">
@@ -101,7 +101,7 @@
 				class="nav-link dropdown-toggle" href="#" id="messagesDropdown"
 				role="button" data-toggle="dropdown" aria-haspopup="true"
 				aria-expanded="false"> <i class="fas fa-envelope fa-fw"></i> <span
-					class="badge badge-danger">7</span>
+					class="badge badge-danger"></span>
 			</a>
 				<div class="dropdown-menu dropdown-menu-right"
 					aria-labelledby="messagesDropdown">
@@ -117,11 +117,9 @@
 			</a>
 				<div class="dropdown-menu dropdown-menu-right"
 					aria-labelledby="userDropdown">
-					<a class="dropdown-item" href="#">Settings</a> <a
-						class="dropdown-item" href="#">Activity Log</a>
+					<a class="dropdown-item" href="#">Settings</a> 
 					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" href="#" data-toggle="modal"
-						data-target="#logoutModal">Logout</a>
+					<a class="dropdown-item" th:href="@{/logout}">Logout</a>
 				</div></li>
 		</ul>
 
@@ -154,6 +152,31 @@
 
 				<div class="card" th:each="user:${users}">
 
+					<div class="modal fade"  role="dialog" th:id="myModal+${user.id}">
+						<div class="modal-dialog">
+
+							<!-- Modal content-->
+							<div class="modal-content">
+								<div class="modal-header">
+									<h4 class="modal-title">Change Role</h4>
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+
+								</div>
+								<div class="modal-body">
+									<form th:action="@{/admin/user/{id}(id=${user.id})}"
+										method="post">
+										<input type="radio" name="rolename" value="admin" checked>Admin</br>
+										<input type="radio" name="rolename" value="user">User<br>
+										<br>
+										<button type="submit" class="btn btn-primary btn-block">Set</button>
+									</form>
+								</div>
+
+							</div>
+
+						</div>
+					</div>
+
 
 
 					<!-- Card content -->
@@ -164,13 +187,15 @@
 									aria-expanded="false"><i class="fa fa-chevron-down"></i></a>
 								<div class="dropdown-menu dropdown-menu-right">
 									<a class="dropdown-item" data-toggle="modal"
-										data-target="#myModal">Set Permissions</a> <a
+										data-target="#myModal" th:attr="data-target='#myModal'+${user.id}">Set Permissions</a> <a
 										class="dropdown-item"
 										th:href="@{/admin/user/{id}(id=${user.id})}">View previous
 										passes</a>
 
 								</div>
 							</div>
+
+
 							<h4 class="card-title">
 								<span th:text="${user.username}"></span>
 							</h4>
@@ -192,30 +217,7 @@
 					</div>
 
 					<!-- Modal -->
-					<div class="modal fade" id="myModal" role="dialog">
-						<div class="modal-dialog">
 
-							<!-- Modal content-->
-							<div class="modal-content">
-								<div class="modal-header">
-									<h4 class="modal-title">Modal Header</h4>
-									<button type="button" class="close" data-dismiss="modal">&times;</button>
-
-								</div>
-								<div class="modal-body">
-									<form th:action="@{/admin/user/{id}(id=${user.id})}"
-										method="post">
-										<input type="radio" name="rolename" value="admin" checked>Admin</br>
-										<input type="radio" name="rolename" value="user">User<br>
-										<br>
-										<button type="submit" class="btn btn-primary btn-block">Set</button>
-									</form>
-								</div>
-
-							</div>
-
-						</div>
-					</div>
 
 				</div>
 

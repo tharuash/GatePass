@@ -8,8 +8,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.b127.gate.dto.RegisterUser;
-import com.b127.gate.entity.Role;
 import com.b127.gate.entity.User;
+import com.b127.gate.repository.RoleRepository;
 import com.b127.gate.repository.UserRepository;
 import com.b127.gate.service.UserService;
 
@@ -18,6 +18,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private RoleRepository roleRepository;
 
 	@Autowired
 	private PasswordEncoder encoder;
@@ -52,7 +55,7 @@ public class UserServiceImpl implements UserService {
 		User user = new User(registerUser.getUsername(), registerUser.getEmail(), registerUser.getIdNo(),
 				encoder.encode(registerUser.getPassword()));
 
-		user.setRoles(Arrays.asList(new Role("ROLE_ADMIN")));
+		user.setRoles(Arrays.asList(roleRepository.getOne(28)));
 
 		return userRepository.save(user);
 	}
@@ -67,6 +70,7 @@ public class UserServiceImpl implements UserService {
 		User updatingUser = userRepository.findById(user.getId())
 				.orElseThrow(() -> new RuntimeException("user not found"));
 
+		updatingUser.setRoles(null);
 		updatingUser.setRoles(user.getRoles());
 		System.out.println(updatingUser);
 		return userRepository.save(updatingUser);

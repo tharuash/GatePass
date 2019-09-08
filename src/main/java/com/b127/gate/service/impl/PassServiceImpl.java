@@ -1,8 +1,8 @@
 package com.b127.gate.service.impl;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +14,6 @@ import com.b127.gate.entity.User;
 import com.b127.gate.repository.PassRepository;
 import com.b127.gate.repository.UserRepository;
 import com.b127.gate.service.PassService;
-import com.b127.gate.service.UserService;
-
-
 
 @Service
 public class PassServiceImpl implements PassService {
@@ -29,7 +26,7 @@ public class PassServiceImpl implements PassService {
 
 	@Override
 	public List<Pass> findAll() {
-		return passRepository.findAll();
+		return passRepository.findAllByOrderByIdAsc();
 	}
 
 	@Override
@@ -45,14 +42,16 @@ public class PassServiceImpl implements PassService {
 	}
 
 	@Override
-	public Pass insert(RegisterPass registerPass, int userId) {
+	public Pass insert(RegisterPass registerPass, int userId) throws ParseException {
 		User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("user not found"));
-		String[] date = registerPass.getDate().split("-");
-		String[] time = registerPass.getTime().split(":");
+		LocalDate date = LocalDate.parse(registerPass.getDate());
+		LocalTime time = LocalTime.parse(registerPass.getTime());
+
 		Pass pass = new Pass();
 		pass.setUser(user);
-		pass.setIssuedTime(new Timestamp(Integer.valueOf(date[0]), Integer.valueOf(date[1]), Integer.valueOf(date[2]),
-				Integer.valueOf(time[0]), Integer.valueOf(time[1]), 0, 0));
+		pass.setIssuedDate(date);
+		pass.setIssuedTime(time);
+
 		return passRepository.save(pass);
 	}
 
@@ -71,12 +70,9 @@ public class PassServiceImpl implements PassService {
 	}
 
 	@Override
-	public List<Pass> findAllByIssuedTime() {
-		Calendar calendar = Calendar.getInstance();
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-		String[] date = formatter.format(calendar.getTime()).split("-");
-		return passRepository.findAllByIssuedTime(new Timestamp(Integer.valueOf(date[0]), Integer.valueOf(date[1]), Integer.valueOf(date[2]),
-				0, 0, 0, 0));
+	public List<Pass> findAllByIssuedDate() throws ParseException {
+
+		return passRepository.findAllByIssuedDate(LocalDate.now());
 	}
 
 	@Override
@@ -84,5 +80,15 @@ public class PassServiceImpl implements PassService {
 		User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
 		return passRepository.findAllByUser(user);
 	}
+
+	@Override
+	public List<Pass> findAllByUserAndDate(String date, int userId) {
+		User user = userRepository.getOne(userId);
+		LocalDate issuedDate = LocalDate.parse(date);
+		
+		return passRepository.findAllByUserAndIssuedDate(user, issuedDate);
+	}
+
+	
 
 }

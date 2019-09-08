@@ -6,16 +6,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.b127.gate.dto.ChangeRole;
-import com.b127.gate.dto.RegisterPass;
-import com.b127.gate.dto.RegisterUser;
 import com.b127.gate.entity.Pass;
 import com.b127.gate.entity.Role;
 import com.b127.gate.entity.User;
@@ -24,7 +22,8 @@ import com.b127.gate.service.RoleService;
 import com.b127.gate.service.UserService;
 
 @Controller
-public class LoginController {
+@RequestMapping("/admin")
+public class AdminController {
 
 	@Autowired
 	private UserService userService;
@@ -35,64 +34,13 @@ public class LoginController {
 	@Autowired
 	private RoleService roleService;
 
-	@RequestMapping("/")
-	public String index() {
-		return "login";
-	}
-
-	@RequestMapping("/register")
-	public String toRegistrationPage() {
-		return "register";
-	}
-
-	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public String doRegistration(@ModelAttribute("user") RegisterUser registerUser) {
-
-		if (userService.insert(registerUser) != null) {
-			return "redirect:/";
-		} else {
-			return "redirect:/register?failed";
-		}
-
-	}
-
-	@RequestMapping("/profile")
-	public String toProfilePage(Model model, @SessionAttribute("userId") int userId) {
-		List<Role> userRoles = userService.findById(userId).getRoles();
-
-		for (Role r : userRoles) {
-
-			if (r.getName().contains("ROLE_ADMIN")) {
-
-				model.addAttribute("passes", passService.findAll());
-				return "admin-dashboard";
-			}
-		}
-		model.addAttribute("passes", passService.findAllByUserId(userId));
-		return "user-dashboard";
-	}
-
-	@RequestMapping("/user/pass")
-	public String toAddPass() {
-		return "user-pass";
-	}
-
-	@RequestMapping(value = "/user/pass", method = RequestMethod.POST)
-	public String addPass(@ModelAttribute("pass") RegisterPass registerPass, @SessionAttribute("userId") int userId) {
-		if (passService.insert(registerPass, userId) != null) {
-			return "redirect:/user/pass?success";
-		} else {
-			return "redirect:/user/pass?error";
-		}
-	}
-
-	@RequestMapping("/admin/passes")
+	@GetMapping("/passes")
 	public String toViewPasses(Model model) {
 		model.addAttribute("passes", passService.findAll());
 		return "admin-passes";
 	}
 
-	@RequestMapping("admin/pass/accept/{id}")
+	@GetMapping("/pass/accept/{id}")
 	public String acceptPass(@PathVariable("id") String passId) {
 		Pass pass = new Pass();
 		pass.setId(Integer.valueOf(passId));
@@ -102,7 +50,7 @@ public class LoginController {
 		return "redirect:/admin/passes";
 	}
 
-	@RequestMapping("admin/pass/reject/{id}")
+	@GetMapping("/pass/reject/{id}")
 	public String rejectPass(@PathVariable("id") String passId) {
 		Pass pass = new Pass();
 		pass.setId(Integer.valueOf(passId));
@@ -112,7 +60,7 @@ public class LoginController {
 		return "redirect:/admin/passes";
 	}
 
-	@RequestMapping(value = "admin/pass/search", method = RequestMethod.POST)
+	@PostMapping("/pass/search")
 	public String searchPassByUsername(Model model, @RequestBody String username) {
 
 		model.addAttribute("passes", passService.findAllByUser(username.substring(9)));
@@ -120,20 +68,21 @@ public class LoginController {
 		return "admin-passes";
 	}
 
-	@RequestMapping("/admin/users")
+	@GetMapping("/users")
 	public String toViewUsers(Model model) {
 		model.addAttribute("users", userService.findAll());
 		return "admin-users";
 	}
 
-	@RequestMapping("/admin/user/{id}")
-	public String toViewUserPasses(Model model, @PathVariable("id") String passId) {
-		model.addAttribute("passes", passService.findAllByUserId(Integer.valueOf(passId)));
+	@GetMapping("/user/{id}")
+	public String toViewUserPasses(Model model, @PathVariable("id") String userId) {
+		model.addAttribute("passes", passService.findAllByUserId(Integer.valueOf(userId)));
 		model.addAttribute("user", "user");
+		model.addAttribute("userId", userId);
 		return "admin-passes";
 	}
 
-	@RequestMapping(value = "/admin/user/{id}", method = RequestMethod.POST)
+	@PostMapping("/user/{id}")
 	public String updateUserRoles(Model model, @ModelAttribute("role") ChangeRole changeRole,
 			@PathVariable("id") String userId) {
 		User user = new User();
@@ -142,6 +91,7 @@ public class LoginController {
 
 		if (changeRole.getRolename().contains("admin")) {
 			role = roleService.findByRoleName("ROLE_ADMIN");
+			System.out.println("occures............................");
 
 		} else {
 			role = roleService.findByRoleName("ROLE_USER");
@@ -159,4 +109,12 @@ public class LoginController {
 		return "admin-users";
 	}
 
+	@PostMapping("/user/search/{id}")
+	public String searchPassByDate(Model model, @RequestBody String date, @PathVariable("id") String userId) {
+
+		model.addAttribute("passes", passService.findAllByUserAndDate(date.substring(5), Integer.valueOf(userId)));
+		model.addAttribute("user", "user");
+		model.addAttribute("userId", userId);
+		return "admin-passes";
+	}
 }
